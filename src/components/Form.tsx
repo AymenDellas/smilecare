@@ -1,7 +1,22 @@
 import { useState } from "react";
 
+interface formTypes {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  message: string;
+}
+interface formDataTypes {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  service: string;
+  message: string;
+}
 const ContactSection = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<formDataTypes>({
     firstName: "",
     lastName: "",
     email: "",
@@ -10,19 +25,18 @@ const ContactSection = () => {
     message: "",
   });
 
-  const [formErrors, setFormErrors] = useState({
+  const [formErrors, setFormErrors] = useState<formTypes>({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
     message: "",
   });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formStatus, setFormStatus] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const validateField = (field, value) => {
+  const validateField = (field: string, value: string) => {
     switch (field) {
       case "firstName":
         return !value ? "First name is required" : "";
@@ -45,7 +59,11 @@ const ContactSection = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -53,7 +71,7 @@ const ContactSection = () => {
     }));
 
     // Clear error when typing
-    if (formErrors[name]) {
+    if (formErrors[name as keyof typeof formErrors]) {
       setFormErrors((prev) => ({
         ...prev,
         [name]: "",
@@ -61,7 +79,7 @@ const ContactSection = () => {
     }
   };
 
-  const handleBlur = (e) => {
+  const handleBlur = (e: any) => {
     const { name, value } = e.target;
     setFormErrors((prev) => ({
       ...prev,
@@ -69,20 +87,26 @@ const ContactSection = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     // Validate all fields
-    const errors = {};
+    const errors: Partial<typeof formErrors> = {};
     Object.keys(formData).forEach((field) => {
       if (field !== "service" && field !== "phone") {
         // Phone is optional
-        const error = validateField(field, formData[field]);
-        if (error) errors[field] = error;
+        const error = validateField(
+          field,
+          formData[field as keyof typeof formData]
+        );
+        if (error) errors[field as keyof formTypes] = error;
       }
     });
 
-    setFormErrors(errors);
+    setFormErrors((prev) => ({
+      ...prev,
+      ...errors,
+    }));
 
     // Check if there are any errors
     if (Object.values(errors).some((error) => error)) {
@@ -134,7 +158,7 @@ const ContactSection = () => {
     "Pediatric Dentistry",
   ];
 
-  const fieldStyle = (error) => `
+  const fieldStyle = (error: any) => `
     rounded-lg bg-gray-100 w-full text-gray-800 px-4 py-3 
     placeholder:text-gray-400 outline-none transition-all
     ${error ? "ring-2 ring-red-500" : "focus:ring-2 ring-blue-500/50"}
@@ -320,7 +344,7 @@ const ContactSection = () => {
                       name="service"
                       value={formData.service}
                       onChange={handleChange}
-                      className={`${fieldStyle()} cursor-pointer`}
+                      className={`${fieldStyle(undefined)} cursor-pointer`}
                     >
                       <option value="">Select a service (optional)</option>
                       {dentalServices.map((service, index) => (
