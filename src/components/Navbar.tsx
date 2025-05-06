@@ -27,7 +27,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-2 mx-auto max-w-7xl flex items-center justify-between p-4 bg-white/70 backdrop-blur-3xl shadow-md rounded-lg my-4 z-50">
+    <nav className="sticky top-2 mx-auto max-w-7xl flex items-center justify-between p-4 bg-white/70 backdrop-blur-3xl shadow-md rounded-lg my-4 z-50 font-sans">
       {/* Logo Section */}
       <div className="flex items-center">
         <img src="/tooth.svg" alt="Dental Logo" className="w-16 h-auto" />
